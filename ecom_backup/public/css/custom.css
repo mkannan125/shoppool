@@ -1,0 +1,19 @@
+.navbar-inverse {
+    color: red;
+    background-color: lightblue;
+    border-color: lightblue;
+}
+
+.navbar-inverse .navbar-brand {
+    color: red;
+    background-color: lightblue;
+    border-color: lightblue;
+}
+
+.navbar-inverse .navbar-nav>li>a {
+    color: red;
+}
+
+body {
+    background-color: yellow;
+}
