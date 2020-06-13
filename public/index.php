@@ -1,6 +1,25 @@
 <?php require_once("../resources/config.php"); ?>
 <?php include(TEMPLATE_FRONT . DS . "header.php") ?>
+<style>
+div.transbox {
+    background: rgb(0,0,0);
+    margin: 30px;
+    background: rgba(0,0,0,0.6);
+}
+body {
+background: url("cupertino_market.jpg") no-repeat center center fixed;
+-webkit-background-size: cover;
+-moz-background-size: cover;
+-o-background-size: cover;
+background-size: cover;
+}
+h1 {
 
+    margin: 5%;
+    font-weight: bold;
+    color: #FFFFFF;
+}
+</style>
     <!-- Page Content -->
     <div class="container">
 

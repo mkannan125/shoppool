@@ -66,6 +66,10 @@
                                     <input type="password" name="confirm_password" id="confirm-password" tabindex="2"
                                            class="form-control" placeholder="Confirm Password" required>
                                 </div>
+                                <div class="form-check">
+                                    <label class="form-check-label" for="farmer_check">I am a Farmer</label>
+                                    <input type="checkbox" class="form-check-input" name="farmer_check" id="farmer_check">
+                                </div>
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-sm-6 col-sm-offset-3">

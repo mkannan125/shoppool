@@ -35,8 +35,10 @@ function redirect($location) {
 
 function query($sql) {
     global $connection;
+    $result = mysqli_query($connection, $sql);
+    confirm($result);
+    return $result;
 
-    return mysqli_query($connection, $sql);
 }
 
 function confirm($result) {
@@ -198,7 +200,7 @@ function display_image($picture) {
 }
 
 function get_products_in_admin() {
-    $query = query(" SELECT * FROM products");
+    $query = query(" SELECT * FROM products WHERE farmer_id = " . $_GET['id']);
     confirm($query);
     while ($row = fetch_array($query)) {
         $category = show_product_category_title($row['product_category_id']);
@@ -461,6 +463,7 @@ function validate_user_registration()
         $email = clean($_POST['email']);
         $password = clean($_POST['password']);
         $confirm_password = clean($_POST['confirm_password']);
+        $farmer_check = clean($_POST['farmer_check']);
 
         if (strlen($username) < $min) {
             $errors[] = "Your username cannot be less than {$min} characters";
@@ -483,8 +486,8 @@ function validate_user_registration()
                 validation_errors($error);
             }
         } else {
-            if (register_user($username, $email, $password)) {
-                set_message("<p class='bg-success text-center'>Please check your email or spam folder for an activation link</p>");
+            if (register_user($username, $email, $password, $farmer_check)) {
+                set_message("<p class='bg-success text-center'>Thanks for joining Shoppool. Please login to continue.</p>");
                 redirect("index.php");
             } else {
                 //set_message("<p class='bg-danger text-center'>Sorry we could not register the user</p>");
@@ -494,7 +497,7 @@ function validate_user_registration()
     }
 }
 
-function register_user($username, $email, $password) {
+function register_user($username, $email, $password, $farmer_check) {
     $username = escape_string($username);
     $email = escape_string($email);
     $password = escape_string($password);
@@ -504,8 +507,13 @@ function register_user($username, $email, $password) {
         return false;
     } else {
         $password = md5($password);
-        $sql = "INSERT INTO users(username, email, password)";
-        $sql .= " VALUES('$username', '$email', '$password')";
+        if ($farmer_check == 'on') {
+            $sql = "INSERT INTO users(username, email, password, admin)";
+            $sql .= " VALUES('$username', '$email', '$password', 1)";
+        } else {
+            $sql = "INSERT INTO users(username, email, password)";
+            $sql .= " VALUES('$username', '$email', '$password')";
+        }
         $result = query($sql);
         confirm($result);
         $subject = "Shoppool Registration";
@@ -566,18 +574,14 @@ function validate_user_login()
                 echo validation_errors($error);
             }
         } else {
-            if (login_user($email, $password)) {
-                redirect("shop.php");
-            } else {
-                echo validation_errors("Your credentials are not correct");
-            }
+            login_user($email, $password);
         }
     }
 
 }
 
 function login_user($email, $password) {
-    $sql = "SELECT password, id, username FROM users WHERE email = '" . escape_string($email) . "' ";
+    $sql = "SELECT password, id, username, admin FROM users WHERE email = '" . escape_string($email) . "' ";
     $result = query($sql);
     confirm($result);
     if (row_count($result) == 1) {
@@ -587,13 +591,17 @@ function login_user($email, $password) {
             session_start();
             $_SESSION['email'] = $email;
             $_SESSION['username'] = $row['username'];
-            header("Refresh: 0");
-            return true;
+            if ($row['admin'] == 1) {
+                $_SESSION['is_farmer'] = 1;
+                redirect("../public/admin/index.php?id=1");
+            }else {
+                redirect("shop.php");
+            }
         } else {
-            return false;
+            echo validation_errors("Your credentials are incorrect");
         }
     } else {
-        return false;
+        echo validation_errors("Your credentials are incorrect");
     }
 }
 
@@ -975,6 +983,95 @@ function order_confirmation_email() {
 </html>
 END;
     return $message;
+}
+
+/************************** FORGOT PASSWORD FUNCTIONS *****************/
+function token_generator()
+{
+    $token = $_SESSION['token'] = md5(uniqid(mt_rand(), true));
+    return $token;
+}
+
+function recover_password() {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if (isset($_SESSION['token']) && $_POST['token'] === $_SESSION['token']) {
+            $email = clean($_POST['email']);
+            echo $email;
+            if (email_exists($email)) {
+                $validation_code = md5($email + microtime());
+                echo $validation_code;
+                setcookie('temp_access_code', $validation_code, time() + 10*60);
+                $sql = "UPDATE users SET validation_code = '" . escape_string($validation_code) . "' WHERE email = '".escape_string($email)."'";
+                $result = query($sql);
+                confirm($result);
+                $subject = "Please reset your password";
+                $message = " Here is your password reset code {$validation_code}
+                Click here to reset your password http://localhost/ecom/public/code.php?email=$email&code=$validation_code";
+                $headers = "From: noreply@yourwebsite.com";
+                if (!send_email($email, $subject, $message, $headers)) {
+                    validation_errors("Email could not be sent. ");
+                }
+                set_message("<p class='bg-success text-center'>Please check your email or spam folder for an activation for a password reset code.</p>");
+                redirect("index.php");
+            } else {
+                validation_errors("email doesn't exist");
+            }
+
+        } else {
+            redirect("index.php");
+        }
+        if (isset($_POST['cancel_submit'])) {
+            redirect("login.php");
+        }
+    }
+}
+
+function validate_code() {
+    if (isset($_COOKIE['temp_access_code'])) {
+        if (!isset($_GET['email']) && !isset($_GET['code'])) {
+            redirect("index.php");
+        } else if (empty($_GET['email']) || empty($_GET['code'])){
+            redirect("index.php");
+        } else {
+            if(isset($_POST['code'])) {
+                $email = clean ($_GET['email']);
+                $validation_code = clean($_POST['code']);
+                $sql = "SELECT id FROM users WHERE validation_code = '" . escape_string($validation_code). "' ";
+                $result = query($sql);
+                if (row_count($result) == 1) {
+                    setcookie('temp_access_code', $validation_code, time() + 5*60);
+                    redirect("reset.php?email=$email&code=$validation_code");
+                } else {
+                    echo validation_errors("Sorry wrong validation code");
+                }
+            }
+        }
+
+    }
+    else {
+        set_message("<p class='bg-danger text-center'>Sorry, your validation code expired.</p>");
+        redirect("recover.php");
+    }
+
+}
+
+function password_reset() {
+    if (isset($_COOKIE['temp_access_code'])) {
+        if (isset($_GET['email']) && isset($_GET['code'])) {
+            if (isset($_SESSION['token']) && isset($_POST['token']) && $_POST['token'] === $_SESSION['token']) {
+                if ($_POST['password'] === $_POST['confirm_password']) {
+                    $updated_password=md5($_POST['password']);
+                    $sql = "UPDATE users SET password = '" . escape_string($updated_password) . "', validation_code = 0 WHERE email = '" . escape_string($_GET['email']) . "'";
+                    query($sql);
+                    set_message("<p class='bg-success text-center'>Your password has been updated. Please login.</p>");
+                    redirect("login.php");
+                }
+            }
+        }
+    } else {
+        set_message("<p class='bg-danger text-center'>Sorry your time has expired.</p>");
+        redirect("recover.php");
+    }
 }
 
 

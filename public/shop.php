@@ -8,10 +8,9 @@
 
 <!-- Page Content -->
 <div class="container">
-
     <!-- Jumbotron Header -->
     <header>
-        <h2>Shop</h2>
+        <h1>Shop</h1>
     </header>
 
     <hr>
@@ -21,9 +20,7 @@
 
     <!-- Page Features -->
 
-    <div class="row text-center">
         <?php get_products(); ?>
-    </div>
     <!-- /.row -->
 
 <!-- /.container -->

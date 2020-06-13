@@ -64,8 +64,8 @@ function cart() {
                             if ($farmer_used == 0) {
                                 echo "<h2>{$farmer_row['farmer_name']}'s products selected: </h2><table class=\"table table-striped\">
           <form>
-                <label for=\"pickupdate\">Pick-up Date:&nbsp&nbsp&nbsp&nbsp&nbsp</label>
-                <input type=\"date\" id=\"pickupdate\" name=\"pickupdate\" ></form> 
+                <!--<label for=\"pickupdate\">Pick-up Date:&nbsp&nbsp&nbsp&nbsp&nbsp</label>
+                <input type=\"date\" id=\"pickupdate\" name=\"pickupdate\" ></form> -->
         <thead>
           <tr>
            <th>Product</th>

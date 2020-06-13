@@ -14,22 +14,18 @@
     color: red;
 }
 
-body {
-    background: url("cupertino_market.jpg") no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-}
+/*div.transbox {*/
+/*    background: rgb(0,0,0);*/
+/*    margin: 30px;*/
+/*    background: rgba(0,0,0,0.6);*/
+/*}*/
 
-div.transbox {
-    background: rgb(0,0,0);
-    margin: 30px;
-    background: rgba(0,0,0,0.6);
-}
+/*div.transbox h1, h2, th, td {*/
+/*    margin: 5%;*/
+/*    font-weight: bold;*/
+/*    color: #FFFFFF;*/
+/*}*/
 
-div.transbox h1 {
-    margin: 5%;
-    font-weight: bold;
-    color: #FFFFFF;
-}
+/*div.transbox table tr:nth-child(even) td {*/
+/*    background: transparent;*/
+/*}*/

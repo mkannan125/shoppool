@@ -16,19 +16,20 @@
     <!-- Page Content -->
     <div class="container">
 
-
 <!-- /.row --> 
 
-<div class="row">
-        <h4 class="text-center bg-danger"><?php display_message(); ?></h4>
-      <h1>Checkout</h1>
+        <div class="row">
 
-    <form action="thank_you.php?order=1" method="post">
+                <h4 class="text-center bg-danger"><?php display_message(); ?></h4>
+                  <h1>Checkout</h1>
 
-            <?php cart(); ?>
-        <?php echo show_order_button(); ?>
-</form>
+                <form action="thank_you.php?order=1" method="post">
+                    <div class="col-lg-10 col-lg-offset-1">
+                                <?php cart();
+                                    echo show_order_button(); ?>
 
+                    </div>
+                </form>
 
 
 <!--  ***********CART TOTALS*************-->
@@ -44,10 +45,6 @@
     <?php
     echo isset($_SESSION['item_quantity']) ? $_SESSION['item_quantity']: $_SESSION['item_quantity'] = "0";
     ?></td>
-</tr>
-<tr class="shipping">
-<th>Shipping and Handling</th>
-<td>Free Shipping</td>
 </tr>
 
 <tr class="order-total">
@@ -68,7 +65,6 @@
 
 
  </div><!--Main Content-->
-
 
     </div>
     <!-- /.container -->
