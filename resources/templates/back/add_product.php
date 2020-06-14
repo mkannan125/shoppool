@@ -1,9 +1,15 @@
+
+<?php if(!(isset($_SESSION['is_farmer']) && $_SESSION['is_farmer'] == 1)){
+    redirect('index.php');
+    set_message("You do not have access to that page!");
+}?>
 <?php add_product(); ?>
+
 <div class="col-md-12">
 
 <div class="row">
 <h1 class="page-header">
-   Add Product
+   Add Product for <?php echo $_SESSION['username']; ?>
 </h1>
 </div>
                
@@ -72,16 +78,16 @@
 
     </div>
 
-    <div class="form-group">
-        <label for="product-title">Farmer</label>
-        <select name="farmer_id" id="" class="form-control">
-            <option value="">Select Farmer Name</option>
-            <?php show_farmers_add_product_page(); ?>
-
-        </select>
-
-
-    </div>
+<!--    <div class="form-group">-->
+<!--        <label for="product-title">Farmer</label>-->
+<!--        <select name="farmer_id" id="" class="form-control">-->
+<!--            <option value="">Select Farmer Name</option>-->
+<!--            --><?php //show_farmers_add_product_page(); ?>
+<!---->
+<!--        </select>-->
+<!---->
+<!---->
+<!--    </div>-->
 
 
 

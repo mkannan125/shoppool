@@ -18,7 +18,7 @@ if (!isset($_SESSION['email'])) {
                 <?php
 
                 if($_SERVER['REQUEST_URI'] == "/ecom/public/admin/" || $_SERVER['REQUEST_URI'] == "/ecom/public/admin/index.php") {
-                    include(TEMPLATE_BACK . "/products.php?id=" . $_GET['id']);
+                    include(TEMPLATE_BACK . "/products.php");
                 }
 
                 else if(isset($_GET['orders'])) {

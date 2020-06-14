@@ -200,23 +200,23 @@ function display_image($picture) {
 }
 
 function get_products_in_admin() {
-    $query = query(" SELECT * FROM products WHERE farmer_id = " . $_GET['id']);
+    $query = query(" SELECT * FROM products WHERE farmer_id = " . $_SESSION['farmer_id']);
     confirm($query);
     while ($row = fetch_array($query)) {
         $category = show_product_category_title($row['product_category_id']);
         $product_image = display_image($row['product_image']);
         $product = <<<DELIMETER
-        <tr>
-            <td>{$row['product_id']}</td>
-            <td>{$row['product_title']}<br>
-              <a href="index.php?edit_product&id={$row['product_id']}"><img width='100' src="../../resources/{$product_image}" alt=""></a>
-            </td>
-            <td>{$category}</td>
-            <td>{$row['product_price']}</td>
-            <td>{$row['product_quantity']}</td>
-            <td><a class="btn btn-danger" href="../../resources/templates/back/delete_product.php?id={$row['product_id']}"><span class="glyphicon glyphicon-remove"></span></a></td>
+    <tr>
+        <td>{$row['product_id']}</td>
+        <td>{$row['product_title']}<br>
+          <a href="index.php?edit_product&id={$row['product_id']}"><img width='100' src="../../resources/{$product_image}" alt=""></a>
+        </td>
+        <td>{$category}</td>
+        <td>{$row['product_price']}</td>
+        <td>{$row['product_quantity']}</td>
+        <td><a class="btn btn-danger" href="../../resources/templates/back/delete_product.php?id={$row['product_id']}"><span class="glyphicon glyphicon-remove"></span></a></td>
 
-        </tr>
+    </tr>
 DELIMETER;
         echo $product;
     }
@@ -227,7 +227,7 @@ function add_product() {
     if (isset($_POST['publish'])) {
         $product_title = escape_string($_POST['product_title']);
         $product_category_id = escape_string($_POST['product_category_id']);
-        $product_farmer_id = escape_string($_POST['farmer_id']);
+        $product_farmer_id = $_SESSION['farmer_id'];
         $product_price = escape_string($_POST['product_price']);
         $product_description = escape_string($_POST['product_description']);
         $short_desc = escape_string($_POST['short_desc']);
@@ -508,11 +508,11 @@ function register_user($username, $email, $password, $farmer_check) {
     } else {
         $password = md5($password);
         if ($farmer_check == 'on') {
-            $sql = "INSERT INTO users(username, email, password, admin)";
-            $sql .= " VALUES('$username', '$email', '$password', 1)";
+            $sql = "INSERT INTO users(username, email, password, validation_code, admin)";
+            $sql .= " VALUES('$username', '$email', '$password', 0, 1)";
         } else {
-            $sql = "INSERT INTO users(username, email, password)";
-            $sql .= " VALUES('$username', '$email', '$password')";
+            $sql = "INSERT INTO users(username, email, password, validation_code, admin)";
+            $sql .= " VALUES('$username', '$email', '$password', 0, 0)";
         }
         $result = query($sql);
         confirm($result);
@@ -591,9 +591,10 @@ function login_user($email, $password) {
             session_start();
             $_SESSION['email'] = $email;
             $_SESSION['username'] = $row['username'];
+            $_SESSION['farmer_id'] = $row['id'];
             if ($row['admin'] == 1) {
                 $_SESSION['is_farmer'] = 1;
-                redirect("../public/admin/index.php?id=1");
+                redirect("../public/admin/index.php?products&id=" . escape_string($row['id']));
             }else {
                 redirect("shop.php");
             }
