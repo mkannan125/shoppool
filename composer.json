@@ -1,7 +1,3 @@
 {
-    "require": {
-        "php": "^7.2.0",
-        "vendor/phpmailer": "^6.1",
-	    "ext-mysqli": "*"
-    }
+    
 }
