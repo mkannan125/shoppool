@@ -25,7 +25,7 @@ h1 {
 
         <div class="row transbox">
             <div class="bg"></div>
-            <h1>Welcome to Shoppool</h1>
+            <h1>Welcome</h1>
             <?php //include(TEMPLATE_FRONT . DS . "side_nav.php") ?>
 
             <!-- Categories here -->
